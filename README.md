@@ -1,12 +1,61 @@
-# React + Vite
+# 🖥️ School Timetable Frontend (React.js)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the **React.js frontend** for the School Timetable Generator system. It interacts with a Spring Boot backend via REST APIs and allows users to manage classrooms, teachers, subjects, periods, and generate timetables with support for teacher absences.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌐 Tech Stack
 
-## Expanding the ESLint configuration
+- **React.js**
+- **Bootstrap 5** – for responsive UI
+- **AG Grid** – for advanced timetable table display and filtering
+- **Axios** – for API calls
+- **React Router** – for navigation between components
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+---
+
+## 📌 Features
+
+### 🧾 Data Management
+- Add/Edit/Delete **Classrooms**, **Periods**, **Subjects**, and **Teachers**
+- Assign subjects to teachers
+- React forms with Bootstrap styles
+
+### 📅 Timetable Display
+- View weekly timetable by **class**, **teacher**, or **date**
+- Filter by teacher name or class
+- Generate timetable for:
+  - This week
+  - Custom start and end date
+- Display using **AG Grid** with sorting, filtering, and column visibility
+
+### 📤 Excel Export
+- Download most recent Excel file of weekly timetable
+- View and download past weekly timetables via dropdown
+
+### 🧑‍🏫 Absence Management
+- Mark **full-day** or **half-day** teacher absences
+- Automatically handled in backend and reflected in UI
+
+---
+
+## 🛠️ Setup Instructions
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/dheerendrapurohit/SchoolTimetable-FE.git
+   cd SchoolTimetable-FE
+
+2.Install dependencies:
+
+npm install
+
+3.Set API URL in .env file:
+
+VITE_API_BASE_URL=http://localhost:8080
+
+4.Run the app:
+
+npm run dev
+
