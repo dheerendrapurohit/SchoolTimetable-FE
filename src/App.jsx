@@ -11,6 +11,7 @@ import TeacherAbsenceManager from './components/TeacherAbsenceManager';
 import TimetableEntryList from './components/TimetableEntryList';
 import WeeklyTimetableView from './components/WeeklyTimetableView';
 import HalfDayLeave from './components/HalfDayLeave';
+import WeeklyTeacherTimetableView from './components/WeeklyTeacherTimetableView';
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
           <Route path="/manageteachers" element={<TeacherAbsenceManager />} />
           <Route path="/managehalfday" element={<HalfDayLeave/>} />
           <Route path="/weektimetable" element={<WeeklyTimetableView />} />
+          <Route path="/weekteachrestimetable" element={<WeeklyTeacherTimetableView />} />
           <Route path="/timetable" element={<TimetableEntryList />} />
         </Routes>
       </div>

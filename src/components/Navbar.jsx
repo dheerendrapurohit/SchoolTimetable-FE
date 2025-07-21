@@ -3,12 +3,21 @@ import { NavLink } from 'react-router-dom';
 
 const Navbar = () => {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
       <div className="container-fluid">
-        <NavLink className="navbar-brand" to="/">School Timetable</NavLink>
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+        <NavLink className="navbar-brand fw-bold text-info" to="/">
+          School Timetable
+        </NavLink>
+
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavDropdown"
+        >
           <span className="navbar-toggler-icon"></span>
         </button>
+
         <div className="collapse navbar-collapse" id="navbarNavDropdown">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
@@ -34,15 +43,15 @@ const Navbar = () => {
               >
                 Teachers
               </NavLink>
-              <ul className="dropdown-menu">
+              <ul className="dropdown-menu dropdown-menu-dark">
                 <li>
                   <NavLink className="dropdown-item" to="/teachers">Manage Teachers</NavLink>
                 </li>
                 <li>
-                  <NavLink className="dropdown-item" to="/manageteachers">Manage Full Day Absence</NavLink>
+                  <NavLink className="dropdown-item" to="/manageteachers">Full Day Absence</NavLink>
                 </li>
                 <li>
-                  <NavLink className="dropdown-item" to="/managehalfday">Manage Half Day Absence</NavLink>
+                  <NavLink className="dropdown-item" to="/managehalfday">Partial Day Absence</NavLink>
                 </li>
               </ul>
             </li>
@@ -55,18 +64,20 @@ const Navbar = () => {
                 role="button"
                 data-bs-toggle="dropdown"
               >
-                Time Table
+                Timetable
               </NavLink>
-              <ul className="dropdown-menu">
+              <ul className="dropdown-menu dropdown-menu-dark">
                 <li>
-                  <NavLink className="dropdown-item" to="/weektimetable">Weekly Time Table</NavLink>
+                  <NavLink className="dropdown-item" to="/weektimetable">Students Weekly Time Table</NavLink>
                 </li>
                 <li>
-                  <NavLink className="dropdown-item" to="/timetable">Time Table Lists</NavLink>
+                  <NavLink className="dropdown-item" to="/weekteachrestimetable">Teachers Weekly Time Table</NavLink>
+                </li>
+                <li>
+                  <NavLink className="dropdown-item" to="/timetable">Timetable List</NavLink>
                 </li>
               </ul>
             </li>
-
           </ul>
         </div>
       </div>

@@ -23,6 +23,11 @@ const subjectOptions = [
   label: s,
 }));
 
+const classOptions = ["PKG", "LKG", "UKG", "1", "2", "3", "4", "5"].map((cls) => ({
+  value: cls,
+  label: cls,
+}));
+
 const TeacherList = () => {
   const [teachers, setTeachers] = useState([]);
   const [formData, setFormData] = useState({
@@ -30,6 +35,7 @@ const TeacherList = () => {
     name: "",
     availablePeriods: [],
     subjects: [],
+    availableClasses: [],
   });
 
   useEffect(() => {
@@ -52,6 +58,7 @@ const TeacherList = () => {
       name: formData.name,
       availablePeriods: formData.availablePeriods,
       subjects: formData.subjects,
+      availableClasses: formData.availableClasses,
     };
 
     try {
@@ -61,7 +68,13 @@ const TeacherList = () => {
         await axios.put(`${API_BASE_URL}/api/teachers/${formData.id}`, payload);
       }
 
-      setFormData({ id: null, name: "", availablePeriods: [], subjects: [] });
+      setFormData({
+        id: null,
+        name: "",
+        availablePeriods: [],
+        subjects: [],
+        availableClasses: [],
+      });
       fetchTeachers();
     } catch (error) {
       console.error("Error saving teacher:", error);
@@ -72,8 +85,9 @@ const TeacherList = () => {
     setFormData({
       id: teacher.id,
       name: teacher.name,
-      availablePeriods: teacher.availablePeriods,
-      subjects: teacher.subjects,
+      availablePeriods: teacher.availablePeriods || [],
+      subjects: teacher.subjects || [],
+      availableClasses: teacher.availableClasses || [],
     });
   };
 
@@ -87,22 +101,29 @@ const TeacherList = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4 text-primary">Teacher List</h2>
+    <div className="container my-5">
+      <h2 className="mb-4 text-primary fw-bold">Teacher Management</h2>
 
-      <form onSubmit={handleSubmit} className="row g-3 mb-4">
+      <form
+        onSubmit={handleSubmit}
+        className="row g-3 align-items-end mb-4 p-3 bg-light rounded-4 shadow-sm border border-2 border-info"
+      >
         <div className="col-md-3">
+          <label className="form-label fw-semibold">Name</label>
           <input
             type="text"
             className="form-control"
             placeholder="Teacher Name"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, name: e.target.value })
+            }
             required
           />
         </div>
 
-        <div className="col-md-4">
+        <div className="col-md-3">
+          <label className="form-label fw-semibold">Available Periods</label>
           <Select
             isMulti
             options={periodOptions}
@@ -116,11 +137,12 @@ const TeacherList = () => {
                 availablePeriods: selected.map((opt) => opt.value),
               })
             }
-            placeholder="Select Available Periods"
+            placeholder="Select Periods"
           />
         </div>
 
-        <div className="col-md-4">
+        <div className="col-md-3">
+          <label className="form-label fw-semibold">Subjects</label>
           <Select
             isMulti
             options={subjectOptions}
@@ -138,13 +160,32 @@ const TeacherList = () => {
           />
         </div>
 
-        <div className="col-auto">
+        <div className="col-md-3">
+          <label className="form-label fw-semibold">Available Classes</label>
+          <Select
+            isMulti
+            options={classOptions}
+            value={formData.availableClasses.map((c) => ({
+              value: c,
+              label: c,
+            }))}
+            onChange={(selected) =>
+              setFormData({
+                ...formData,
+                availableClasses: selected.map((opt) => opt.value),
+              })
+            }
+            placeholder="Select Classes"
+          />
+        </div>
+
+        <div className="col-md-auto">
           <button type="submit" className="btn btn-success">
-            {formData.id === null ? "Add" : "Update"}
+            {formData.id === null ? "Add Teacher" : "Update"}
           </button>
         </div>
         {formData.id !== null && (
-          <div className="col-auto">
+          <div className="col-md-auto">
             <button
               type="button"
               className="btn btn-secondary"
@@ -154,6 +195,7 @@ const TeacherList = () => {
                   name: "",
                   availablePeriods: [],
                   subjects: [],
+                  availableClasses: [],
                 })
               }
             >
@@ -167,30 +209,36 @@ const TeacherList = () => {
         {teachers.map((t) => (
           <li
             key={t.id}
-            className="list-group-item d-flex justify-content-between align-items-center"
+            className="list-group-item list-group-item-light mb-2 rounded-3 shadow-sm border d-flex justify-content-between align-items-start"
           >
-            <div>
-              <strong>{t.name}</strong>
-              <div>
-                <small className="text-muted">
-                  Periods: {t.availablePeriods.join(", ")}
+            <div className="ms-2 me-auto">
+              <div className="fw-bold text-primary">{t.name}</div>
+              <div className="text-muted">
+                <small>
+                  <strong>Periods:</strong> {t.availablePeriods.join(", ")}
                 </small>
               </div>
-              <div>
-                <small className="text-muted">
-                  Subjects: {t.subjects.join(", ")}
+              <div className="text-muted">
+                <small>
+                  <strong>Subjects:</strong> {t.subjects.join(", ")}
+                </small>
+              </div>
+              <div className="text-muted">
+                <small>
+                  <strong>Classes:</strong>{" "}
+                  {t.availableClasses ? t.availableClasses.join(", ") : "—"}
                 </small>
               </div>
             </div>
             <div>
               <button
-                className="btn btn-sm btn-warning me-2"
+                className="btn btn-sm btn-outline-warning me-2"
                 onClick={() => handleEdit(t)}
               >
                 Edit
               </button>
               <button
-                className="btn btn-sm btn-danger"
+                className="btn btn-sm btn-outline-danger"
                 onClick={() => handleDelete(t.id)}
               >
                 Delete

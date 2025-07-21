@@ -32,70 +32,79 @@ const ClassroomList = () => {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`${API_BASE_URL}/api/classrooms/${id}`);
-    fetchClassrooms();
+    if (window.confirm("Are you sure you want to delete this classroom?")) {
+      await axios.delete(`${API_BASE_URL}/api/classrooms/${id}`);
+      fetchClassrooms();
+    }
   };
 
-return (
-  <div className="container mt-5">
-    <h2 className="mb-4 text-primary">Classroom List</h2>
+  return (
+    <div className="container mt-5">
+      <h2 className="mb-4 text-center text-primary fw-bold">Manage Classrooms</h2>
 
-    <form onSubmit={handleSubmit} className="mb-4 row g-2">
-      <div className="col-sm-6 col-md-4">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Classroom name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          required
-        />
-      </div>
-      <div className="col-auto">
-        <button type="submit" className="btn btn-success">
-          {formData.id === null ? "Add" : "Update"}
-        </button>
-      </div>
-      {formData.id !== null && (
+      <form onSubmit={handleSubmit} className="row gy-2 gx-3 align-items-center mb-4">
+        <div className="col-sm-6 col-md-4">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Enter classroom name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
+          />
+        </div>
         <div className="col-auto">
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => setFormData({ id: null, name: "" })}
-          >
-            Cancel
+          <button type="submit" className="btn btn-success px-4">
+            {formData.id === null ? "Add" : "Update"}
           </button>
         </div>
-      )}
-    </form>
-
-    <ul className="list-group">
-      {classrooms.map((c) => (
-        <li
-          key={c.id}
-          className="list-group-item d-flex justify-content-between align-items-center"
-        >
-          <span>{c.name}</span>
-          <div>
+        {formData.id !== null && (
+          <div className="col-auto">
             <button
-              className="btn btn-sm btn-warning me-2"
-              onClick={() => handleEdit(c)}
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setFormData({ id: null, name: "" })}
             >
-              Edit
-            </button>
-            <button
-              className="btn btn-sm btn-danger"
-              onClick={() => handleDelete(c.id)}
-            >
-              Delete
+              Cancel
             </button>
           </div>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
+        )}
+      </form>
 
+      <div className="card shadow-sm">
+        <div className="card-body p-0">
+          {classrooms.length === 0 ? (
+            <p className="text-muted text-center py-3">No classrooms available.</p>
+          ) : (
+            <ul className="list-group list-group-flush">
+              {classrooms.map((c) => (
+                <li
+                  key={c.id}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span className="fw-semibold">{c.name}</span>
+                  <div>
+                    <button
+                      className="btn btn-sm btn-outline-warning me-2"
+                      onClick={() => handleEdit(c)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => handleDelete(c.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ClassroomList;

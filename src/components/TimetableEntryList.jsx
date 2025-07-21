@@ -12,6 +12,7 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+
 const TimetableEntryList = () => {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -52,20 +53,20 @@ const TimetableEntryList = () => {
     }
   };
 
-  const generateThisWeek = async () => {
-    setLoading(true);
-    setStatus("");
-    try {
-      const res = await axios.post(`${API_BASE_URL}/api/timetable/generate`);
-      setStatus(res.data);
-      fetchAll();
-    } catch (err) {
-      console.error("Failed to generate timetable:", err);
-      setStatus("Error generating timetable.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const generateThisWeek = async () => {
+  //   setLoading(true);
+  //   setStatus("");
+  //   try {
+  //     const res = await axios.post(`${API_BASE_URL}/api/timetable/generate`);
+  //     setStatus("✅ " + res.data);
+  //     fetchAll();
+  //   } catch (err) {
+  //     console.error("Failed to generate timetable:", err);
+  //     setStatus("❌ Error generating timetable.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const generateBetweenDates = async () => {
     if (!startDate || !endDate) {
@@ -78,11 +79,11 @@ const TimetableEntryList = () => {
       const res = await axios.post(
         `${API_BASE_URL}/api/timetable/generate-between?startDate=${startDate}&endDate=${endDate}`
       );
-      setStatus(res.data);
+      setStatus("✅ " + res.data);
       fetchAll();
     } catch (err) {
       console.error("Failed to generate timetable:", err);
-      setStatus("Error generating timetable.");
+      setStatus("❌ Error generating timetable.");
     } finally {
       setLoading(false);
     }
@@ -120,70 +121,76 @@ const TimetableEntryList = () => {
   }, []);
 
   return (
-    <div className="container mt-5">
-      <h2 className="text-primary mb-4">Timetable Lists</h2>
+    <div className="container my-5">
+      <div className="border rounded p-4 shadow-sm bg-light">
+        <h2 className="text-primary fw-bold mb-4">Weekly Timetable</h2>
 
-      <div className="row g-3 mb-4 align-items-center">
-        <div className="col-auto">
-          <button className="btn btn-success" onClick={generateThisWeek} disabled={loading}>
-            {loading ? "Generating..." : "Generate This Week"}
-          </button>
+        <div className="row g-3 mb-3 align-items-end">
+          
+          <div className="col-auto">
+            <button className="btn btn-primary" onClick={downloadExcel} disabled={loading}>
+              {loading ? "Preparing..." : "Download Excel"}
+            </button>
+          </div>
         </div>
 
-        <div className="col-auto">
-          <button className="btn btn-primary" onClick={downloadExcel} disabled={loading}>
-            {loading ? "Preparing..." : "Download Excel"}
-          </button>
+        <div className="row g-3 mb-4 align-items-end">
+          <div className="col-md-3">
+            <label className="form-label">Start Date</label>
+            <input
+              type="date"
+              className="form-control"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          <div className="col-md-3">
+            <label className="form-label">End Date</label>
+            <input
+              type="date"
+              className="form-control"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+          <div className="col-md-auto">
+            <button
+              className="btn btn-warning mt-md-4"
+              onClick={generateBetweenDates}
+              disabled={loading}
+            >
+              {loading ? "Generating..." : "Generate Custom Range"}
+            </button>
+          </div>
         </div>
+
+        {status && (
+          <div className={`alert ${status.startsWith("✅") ? "alert-success" : "alert-danger"}`}>
+            {status}
+          </div>
+        )}
       </div>
 
-      <div className="row g-3 mb-4 align-items-center">
-        <div className="col-auto">
-          <input
-            type="date"
-            className="form-control"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-        </div>
-        <div className="col-auto">
-          <input
-            type="date"
-            className="form-control"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          />
-        </div>
-        <div className="col-auto">
-          <button
-            className="btn btn-warning"
-            onClick={generateBetweenDates}
-            disabled={loading}
-          >
-            {loading ? "Generating..." : "Generate Custom Range"}
-          </button>
-        </div>
+      <div className="mt-4">
+        {loading ? (
+          <div className="alert alert-info">Loading timetable...</div>
+        ) : entries.length === 0 ? (
+          <div className="alert alert-warning">No timetable entries found.</div>
+        ) : (
+          <div className="ag-theme-alpine mt-3" style={{ height: 500, width: "100%" }}>
+            <AgGridReact
+              rowData={entries}
+              columnDefs={columnDefs}
+              defaultColDef={defaultColDef}
+              pagination={true}
+              paginationPageSize={10}
+            />
+          </div>
+        )}
       </div>
-
-      {status && <div className="alert alert-info">{status}</div>}
-
-      {loading ? (
-        <p>Loading...</p>
-      ) : entries.length === 0 ? (
-        <p>No timetable entries found.</p>
-      ) : (
-        <div className="ag-theme-alpine" style={{ height: 500, width: "100%" }}>
-          <AgGridReact
-            rowData={entries}
-            columnDefs={columnDefs}
-            defaultColDef={defaultColDef}
-            pagination={true}
-            paginationPageSize={10}
-          />
-        </div>
-      )}
     </div>
   );
 };
 
 export default TimetableEntryList;
+

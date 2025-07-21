@@ -5,10 +5,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const SubjectList = () => {
   const [subjects, setSubjects] = useState([]);
-  const [formData, setFormData] = useState({
-    id: null,
-    name: "",
-  });
+  const [formData, setFormData] = useState({ id: null, name: "" });
 
   useEffect(() => {
     fetchSubjects();
@@ -25,10 +22,7 @@ const SubjectList = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const payload = {
-      name: formData.name,
-    };
+    const payload = { name: formData.name };
 
     try {
       if (formData.id === null) {
@@ -36,7 +30,6 @@ const SubjectList = () => {
       } else {
         await axios.put(`${API_BASE_URL}/api/subjects/${formData.id}`, payload);
       }
-
       setFormData({ id: null, name: "" });
       fetchSubjects();
     } catch (error) {
@@ -49,31 +42,33 @@ const SubjectList = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`${API_BASE_URL}/api/subjects/${id}`);
-      fetchSubjects();
-    } catch (error) {
-      console.error("Error deleting subject:", error);
+    if (window.confirm("Are you sure you want to delete this subject?")) {
+      try {
+        await axios.delete(`${API_BASE_URL}/api/subjects/${id}`);
+        fetchSubjects();
+      } catch (error) {
+        console.error("Error deleting subject:", error);
+      }
     }
   };
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4 text-primary">Subject List</h2>
+      <h2 className="text-center text-primary fw-bold mb-4">Manage Subjects</h2>
 
-      <form onSubmit={handleSubmit} className="row g-3 mb-4">
-        <div className="col-md-6">
+      <form onSubmit={handleSubmit} className="row gy-2 gx-3 align-items-center mb-4">
+        <div className="col-sm-6 col-md-4">
           <input
             type="text"
             className="form-control"
-            placeholder="Subject Name"
+            placeholder="Enter subject name"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
         </div>
         <div className="col-auto">
-          <button type="submit" className="btn btn-success">
+          <button type="submit" className="btn btn-success px-4">
             {formData.id === null ? "Add" : "Update"}
           </button>
         </div>
@@ -90,30 +85,38 @@ const SubjectList = () => {
         )}
       </form>
 
-      <ul className="list-group">
-        {subjects.map((s) => (
-          <li
-            key={s.id}
-            className="list-group-item d-flex justify-content-between align-items-center"
-          >
-            <span><strong>{s.name}</strong></span>
-            <div>
-              <button
-                className="btn btn-sm btn-warning me-2"
-                onClick={() => handleEdit(s)}
-              >
-                Edit
-              </button>
-              <button
-                className="btn btn-sm btn-danger"
-                onClick={() => handleDelete(s.id)}
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <div className="card shadow-sm">
+        <div className="card-body p-0">
+          {subjects.length === 0 ? (
+            <p className="text-muted text-center py-3">No subjects available.</p>
+          ) : (
+            <ul className="list-group list-group-flush">
+              {subjects.map((s) => (
+                <li
+                  key={s.id}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span className="fw-semibold">{s.name}</span>
+                  <div>
+                    <button
+                      className="btn btn-sm btn-outline-warning me-2"
+                      onClick={() => handleEdit(s)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => handleDelete(s.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

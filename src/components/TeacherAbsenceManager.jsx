@@ -33,10 +33,10 @@ const TeacherAbsenceManager = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/absences/mark, {
+      const response = await axios.post(`${API_BASE_URL}/api/absences/mark`, {
         name: teacherName,
-        date: date
-      }`);
+        date: date,
+      });
 
       setStatusMsg(response.data);
       setTeacherName("");
@@ -51,73 +51,81 @@ const TeacherAbsenceManager = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4 text-primary">Manage Leaves</h2>
+    <div className="container my-5">
+      <div className="p-4 border rounded shadow-sm bg-light">
+        <h2 className="text-danger mb-4 fw-bold">Teacher Leave Manager</h2>
 
-      <form onSubmit={handleMarkAbsent} className="row g-3 mb-4">
-        <div className="col-md-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Teacher Name"
-            value={teacherName}
-            onChange={(e) => setTeacherName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="col-md-4">
-          <input
-            type="date"
-            className="form-control"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-          />
-        </div>
-        <div className="col-auto">
-          <button type="submit" className="btn btn-danger" disabled={loading}>
-            {loading ? "Marking..." : "Mark Absent"}
-          </button>
-        </div>
-      </form>
+        <form onSubmit={handleMarkAbsent} className="row g-3 align-items-end mb-3">
+          <div className="col-md-5">
+            <label className="form-label fw-semibold">Teacher Name</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter Teacher Name"
+              value={teacherName}
+              onChange={(e) => setTeacherName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="col-md-4">
+            <label className="form-label fw-semibold">Date</label>
+            <input
+              type="date"
+              className="form-control"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+            />
+          </div>
+          <div className="col-md-auto mt-md-4">
+            <button type="submit" className="btn btn-danger" disabled={loading}>
+              {loading ? "Marking..." : "Mark Absent"}
+            </button>
+          </div>
+        </form>
 
-      {statusMsg && (
-        <div className="alert alert-info" role="alert">
-          {statusMsg}
-        </div>
-      )}
+        {statusMsg && (
+          <div className="alert alert-info mt-3" role="alert">
+            {statusMsg}
+          </div>
+        )}
+      </div>
 
-      <h4 className="mt-4">Teacher Leaves</h4>
-      {absences.length === 0 ? (
-        <p>No absences recorded.</p>
-      ) : (
-        <table className="table table-bordered table-striped">
-          <thead className="table-dark">
-            <tr>
-              <th>#</th>
-              <th>Teacher</th>
-              <th>Date</th>
-              <th>Day</th>
-            </tr>
-          </thead>
-          <tbody>
-            {absences.map((a, index) => {
-              const dateObj = new Date(a.date);
-              const day = dateObj.toLocaleDateString("en-US", { weekday: "long" });
-              const dateStr = dateObj.toLocaleDateString("en-GB"); // dd/mm/yyyy
-
-              return (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{a.name}</td>
-                  <td>{dateStr}</td>
-                  <td>{day}</td>
+      <div className="mt-5">
+        <h4 className="fw-bold mb-3">Leave History</h4>
+        {absences.length === 0 ? (
+          <div className="alert alert-secondary">No absences recorded.</div>
+        ) : (
+          <div className="table-responsive">
+            <table className="table table-striped table-bordered align-middle">
+              <thead className="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Teacher</th>
+                  <th>Date</th>
+                  <th>Day</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      )}
+              </thead>
+              <tbody>
+                {absences.map((a, index) => {
+                  const dateObj = new Date(a.date);
+                  const day = dateObj.toLocaleDateString("en-US", { weekday: "long" });
+                  const dateStr = dateObj.toLocaleDateString("en-GB");
+
+                  return (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{a.name}</td>
+                      <td>{dateStr}</td>
+                      <td>{day}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

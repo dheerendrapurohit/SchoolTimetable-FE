@@ -44,26 +44,28 @@ const PeriodList = () => {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`${API_BASE_URL}/api/periods/${id}`);
-    fetchPeriods();
+    if (window.confirm("Are you sure you want to delete this period?")) {
+      await axios.delete(`${API_BASE_URL}/api/periods/${id}`);
+      fetchPeriods();
+    }
   };
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4 text-primary">Period List</h2>
+      <h2 className="text-center text-primary fw-bold mb-4">Manage Periods</h2>
 
-      <form onSubmit={handleSubmit} className="row g-3 mb-4">
-        <div className="col-md-3">
+      <form onSubmit={handleSubmit} className="row gy-2 gx-3 align-items-center mb-4">
+        <div className="col-sm-4 col-md-3">
           <input
             type="text"
             className="form-control"
-            placeholder="Period name"
+            placeholder="Period Name"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
         </div>
-        <div className="col-md-3">
+        <div className="col-sm-4 col-md-3">
           <input
             type="number"
             className="form-control"
@@ -73,7 +75,7 @@ const PeriodList = () => {
             required
           />
         </div>
-        <div className="col-md-3">
+        <div className="col-sm-4 col-md-3">
           <select
             className="form-select"
             value={formData.session}
@@ -86,7 +88,7 @@ const PeriodList = () => {
           </select>
         </div>
         <div className="col-auto">
-          <button type="submit" className="btn btn-success">
+          <button type="submit" className="btn btn-success px-4">
             {formData.id === null ? "Add" : "Update"}
           </button>
         </div>
@@ -95,9 +97,7 @@ const PeriodList = () => {
             <button
               type="button"
               className="btn btn-secondary"
-              onClick={() =>
-                setFormData({ id: null, name: "", duration: "", session: "" })
-              }
+              onClick={() => setFormData({ id: null, name: "", duration: "", session: "" })}
             >
               Cancel
             </button>
@@ -105,32 +105,40 @@ const PeriodList = () => {
         )}
       </form>
 
-      <ul className="list-group">
-        {periods.map((p) => (
-          <li
-            key={p.id}
-            className="list-group-item d-flex justify-content-between align-items-center"
-          >
-            <span>
-              <strong>{p.name}</strong> - {p.duration} mins ({p.session})
-            </span>
-            <div>
-              <button
-                className="btn btn-sm btn-warning me-2"
-                onClick={() => handleEdit(p)}
-              >
-                Edit
-              </button>
-              <button
-                className="btn btn-sm btn-danger"
-                onClick={() => handleDelete(p.id)}
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <div className="card shadow-sm">
+        <div className="card-body p-0">
+          {periods.length === 0 ? (
+            <p className="text-center text-muted py-3">No periods available.</p>
+          ) : (
+            <ul className="list-group list-group-flush">
+              {periods.map((p) => (
+                <li
+                  key={p.id}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>
+                    <strong>{p.name}</strong> - {p.duration} mins ({p.session})
+                  </span>
+                  <div>
+                    <button
+                      className="btn btn-sm btn-outline-warning me-2"
+                      onClick={() => handleEdit(p)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => handleDelete(p.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
