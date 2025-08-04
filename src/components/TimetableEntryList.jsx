@@ -53,20 +53,20 @@ const TimetableEntryList = () => {
     }
   };
 
-  // const generateThisWeek = async () => {
-  //   setLoading(true);
-  //   setStatus("");
-  //   try {
-  //     const res = await axios.post(`${API_BASE_URL}/api/timetable/generate`);
-  //     setStatus("✅ " + res.data);
-  //     fetchAll();
-  //   } catch (err) {
-  //     console.error("Failed to generate timetable:", err);
-  //     setStatus("❌ Error generating timetable.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const generateThisWeek = async () => {
+    setLoading(true);
+    setStatus("");
+    try {
+      const res = await axios.post(`${API_BASE_URL}/api/timetable/generate`);
+      setStatus("✅ " + res.data);
+      fetchAll();
+    } catch (err) {
+      console.error("Failed to generate timetable:", err);
+      setStatus("❌ Error generating timetable.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const generateBetweenDates = async () => {
     if (!startDate || !endDate) {
@@ -126,12 +126,21 @@ const TimetableEntryList = () => {
         <h2 className="text-primary fw-bold mb-4">Weekly Timetable</h2>
 
         <div className="row g-3 mb-3 align-items-end">
+          <div className="row g-3 mb-3 align-items-end">
+  <div className="col-auto">
+    <button className="btn btn-success" onClick={generateThisWeek} disabled={loading}>
+      {loading ? "Generating..." : "Generate This Week"}
+    </button>
+  </div>
+  <div className="col-auto">
+    <button className="btn btn-primary" onClick={downloadExcel} disabled={loading}>
+      {loading ? "Preparing..." : "Download Excel"}
+    </button>
+  </div>
+</div>
+
           
-          <div className="col-auto">
-            <button className="btn btn-primary" onClick={downloadExcel} disabled={loading}>
-              {loading ? "Preparing..." : "Download Excel"}
-            </button>
-          </div>
+          
         </div>
 
         <div className="row g-3 mb-4 align-items-end">

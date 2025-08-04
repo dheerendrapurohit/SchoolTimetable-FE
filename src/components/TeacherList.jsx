@@ -10,18 +10,9 @@ const periodOptions = ["P1", "P2", "P3", "P4", "P5", "P6", "P7"].map((p) => ({
 }));
 
 const subjectOptions = [
-  "English",
-  "Mathematics",
-  "Science",
-  "Kannada",
-  "SocialStudies",
-  "Computer",
-  "Drawing",
-  "Yoga",
-].map((s) => ({
-  value: s,
-  label: s,
-}));
+  "English", "Mathematics", "Science", "Kannada",
+  "SocialStudies", "Computer", "GK", "Yoga",
+].map((s) => ({ value: s, label: s }));
 
 const classOptions = ["PKG", "LKG", "UKG", "1", "2", "3", "4", "5"].map((cls) => ({
   value: cls,
@@ -34,8 +25,7 @@ const TeacherList = () => {
     id: null,
     name: "",
     availablePeriods: [],
-    subjects: [],
-    availableClasses: [],
+    subjectsAndClasses: [{ subject: "", classes: "" }],
   });
 
   useEffect(() => {
@@ -53,12 +43,10 @@ const TeacherList = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const payload = {
       name: formData.name,
       availablePeriods: formData.availablePeriods,
-      subjects: formData.subjects,
-      availableClasses: formData.availableClasses,
+      subjectsAndClasses: formData.subjectsAndClasses,
     };
 
     try {
@@ -68,17 +56,20 @@ const TeacherList = () => {
         await axios.put(`${API_BASE_URL}/api/teachers/${formData.id}`, payload);
       }
 
-      setFormData({
-        id: null,
-        name: "",
-        availablePeriods: [],
-        subjects: [],
-        availableClasses: [],
-      });
+      resetForm();
       fetchTeachers();
     } catch (error) {
       console.error("Error saving teacher:", error);
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      id: null,
+      name: "",
+      availablePeriods: [],
+      subjectsAndClasses: [{ subject: "", classes: "" }],
+    });
   };
 
   const handleEdit = (teacher) => {
@@ -86,8 +77,7 @@ const TeacherList = () => {
       id: teacher.id,
       name: teacher.name,
       availablePeriods: teacher.availablePeriods || [],
-      subjects: teacher.subjects || [],
-      availableClasses: teacher.availableClasses || [],
+      subjectsAndClasses: teacher.subjectsAndClasses || [{ subject: "", classes: "" }],
     });
   };
 
@@ -100,110 +90,137 @@ const TeacherList = () => {
     }
   };
 
+  const handleSubjectClassChange = (index, key, value) => {
+    const updated = [...formData.subjectsAndClasses];
+    updated[index][key] = value;
+    setFormData({ ...formData, subjectsAndClasses: updated });
+  };
+
+  const addSubjectClassRow = () => {
+    setFormData({
+      ...formData,
+      subjectsAndClasses: [...formData.subjectsAndClasses, { subject: "", classes: "" }],
+    });
+  };
+
+  const removeSubjectClassRow = (index) => {
+    const updated = formData.subjectsAndClasses.filter((_, i) => i !== index);
+    setFormData({ ...formData, subjectsAndClasses: updated });
+  };
+
   return (
     <div className="container my-5">
       <h2 className="mb-4 text-primary fw-bold">Teacher Management</h2>
 
-      <form
-        onSubmit={handleSubmit}
-        className="row g-3 align-items-end mb-4 p-3 bg-light rounded-4 shadow-sm border border-2 border-info"
+     <form
+  onSubmit={handleSubmit}
+  className="p-4 mb-4 bg-white border rounded-4 shadow-sm"
+>
+  <h5 className="text-info fw-bold mb-3">Add / Edit Teacher</h5>
+
+  <div className="row g-3">
+    <div className="col-md-4">
+      <label className="form-label fw-semibold">Name</label>
+      <input
+        type="text"
+        className="form-control"
+        placeholder="Teacher Name"
+        value={formData.name}
+        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+        required
+      />
+    </div>
+
+    <div className="col-md-8">
+      <label className="form-label fw-semibold">Available Periods</label>
+      <Select
+        isMulti
+        options={periodOptions}
+        value={formData.availablePeriods.map((p) => ({
+          value: p,
+          label: p,
+        }))}
+        onChange={(selected) =>
+          setFormData({
+            ...formData,
+            availablePeriods: selected.map((opt) => opt.value),
+          })
+        }
+        placeholder="Select Periods"
+      />
+    </div>
+  </div>
+
+  <div className="mt-4">
+    <label className="form-label fw-semibold">Subjects & Classes</label>
+    {formData.subjectsAndClasses.map((entry, index) => (
+      <div
+        key={index}
+        className="row g-2 align-items-center mb-2 bg-light p-2 rounded"
       >
-        <div className="col-md-3">
-          <label className="form-label fw-semibold">Name</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Teacher Name"
-            value={formData.name}
-            onChange={(e) =>
-              setFormData({ ...formData, name: e.target.value })
-            }
-            required
-          />
-        </div>
-
-        <div className="col-md-3">
-          <label className="form-label fw-semibold">Available Periods</label>
+        <div className="col-md-5">
           <Select
-            isMulti
-            options={periodOptions}
-            value={formData.availablePeriods.map((p) => ({
-              value: p,
-              label: p,
-            }))}
-            onChange={(selected) =>
-              setFormData({
-                ...formData,
-                availablePeriods: selected.map((opt) => opt.value),
-              })
-            }
-            placeholder="Select Periods"
-          />
-        </div>
-
-        <div className="col-md-3">
-          <label className="form-label fw-semibold">Subjects</label>
-          <Select
-            isMulti
             options={subjectOptions}
-            value={formData.subjects.map((s) => ({
-              value: s,
-              label: s,
-            }))}
-            onChange={(selected) =>
-              setFormData({
-                ...formData,
-                subjects: selected.map((opt) => opt.value),
-              })
+            value={
+              entry.subject
+                ? { value: entry.subject, label: entry.subject }
+                : null
             }
-            placeholder="Select Subjects"
+            onChange={(selected) =>
+              handleSubjectClassChange(index, "subject", selected.value)
+            }
+            placeholder="Select Subject"
           />
         </div>
-
-        <div className="col-md-3">
-          <label className="form-label fw-semibold">Available Classes</label>
+        <div className="col-md-5">
           <Select
-            isMulti
             options={classOptions}
-            value={formData.availableClasses.map((c) => ({
-              value: c,
-              label: c,
-            }))}
-            onChange={(selected) =>
-              setFormData({
-                ...formData,
-                availableClasses: selected.map((opt) => opt.value),
-              })
+            value={
+              entry.classes
+                ? { value: entry.classes, label: entry.classes }
+                : null
             }
-            placeholder="Select Classes"
+            onChange={(selected) =>
+              handleSubjectClassChange(index, "classes", selected.value)
+            }
+            placeholder="Select Class"
           />
         </div>
-
-        <div className="col-md-auto">
-          <button type="submit" className="btn btn-success">
-            {formData.id === null ? "Add Teacher" : "Update"}
-          </button>
-        </div>
-        {formData.id !== null && (
-          <div className="col-md-auto">
+        <div className="col-md-2 text-end">
+          {index > 0 && (
             <button
               type="button"
-              className="btn btn-secondary"
-              onClick={() =>
-                setFormData({
-                  id: null,
-                  name: "",
-                  availablePeriods: [],
-                  subjects: [],
-                  availableClasses: [],
-                })
-              }
+              className="btn btn-outline-danger btn-sm"
+              onClick={() => removeSubjectClassRow(index)}
             >
-              Cancel
+              ❌
             </button>
-          </div>
-        )}
-      </form>
+          )}
+        </div>
+      </div>
+    ))}
+
+    <button
+      type="button"
+      className="btn btn-sm btn-outline-primary mt-2"
+      onClick={addSubjectClassRow}
+    >
+      ➕ Add Subject-Class
+    </button>
+  </div>
+
+  <div className="mt-4 d-flex gap-2">
+    <button type="submit" className="btn btn-success">
+      {formData.id === null ? "Add Teacher" : "Update"}
+    </button>
+    {formData.id !== null && (
+      <button type="button" className="btn btn-secondary" onClick={resetForm}>
+        Cancel
+      </button>
+    )}
+  </div>
+</form>
+
 
       <ul className="list-group">
         {teachers.map((t) => (
@@ -220,30 +237,30 @@ const TeacherList = () => {
               </div>
               <div className="text-muted">
                 <small>
-                  <strong>Subjects:</strong> {t.subjects.join(", ")}
-                </small>
-              </div>
-              <div className="text-muted">
-                <small>
-                  <strong>Classes:</strong>{" "}
-                  {t.availableClasses ? t.availableClasses.join(", ") : "—"}
+                  <strong>Subjects & Classes:</strong>{" "}
+                  {t.subjectsAndClasses
+                    ?.map((sc) => `${sc.subject} - ${sc.classes}`)
+                    .join(", ")}
                 </small>
               </div>
             </div>
-            <div>
-              <button
-                className="btn btn-sm btn-outline-warning me-2"
-                onClick={() => handleEdit(t)}
-              >
-                Edit
-              </button>
-              <button
-                className="btn btn-sm btn-outline-danger"
-                onClick={() => handleDelete(t.id)}
-              >
-                Delete
-              </button>
-            </div>
+            <div className="d-flex gap-2 align-items-center">
+  <button
+    className="btn btn-outline-warning btn-sm px-3"
+    onClick={() => handleEdit(t)}
+    title="Edit"
+  >
+    Edit
+  </button>
+  <button
+    className="btn btn-outline-danger btn-sm px-3"
+    onClick={() => handleDelete(t.id)}
+    title="Delete"
+  >
+    Delete
+  </button>
+</div>
+
           </li>
         ))}
       </ul>
