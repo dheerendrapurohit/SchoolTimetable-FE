@@ -43,7 +43,7 @@ const TeacherAbsenceManager = () => {
       setDate("");
       fetchAbsences();
     } catch (error) {
-      console.error("Error marking teacher absent:", error);
+      console.error("Error marking teacher absent :", error);
       setStatusMsg(error.response?.data || "Failed to mark absence. Try again.");
     } finally {
       setLoading(false);
