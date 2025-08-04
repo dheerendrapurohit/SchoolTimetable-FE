@@ -78,7 +78,7 @@ const WeeklyTimetableView = () => {
       </div>
 
       {loading ? (
-        <div className="alert alert-info">Loading timetable...</div>
+        <div className="alert alert-info">Loading timetable..</div>
       ) : selectedClass && timetable.length > 0 ? (
         <div className="row">
           {/* Timetable */}
