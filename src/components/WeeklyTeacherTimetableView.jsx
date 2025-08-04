@@ -15,7 +15,7 @@ const WeeklyTeacherTimetableView = () => {
   const fetchTeachers = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/teachers`);
-      setTeachers(res.data); // each teacher should have id and name
+      setTeachers(res.data); 
     } catch (err) {
       console.error("Error loading teachers", err);
     }
