@@ -29,7 +29,7 @@ const HalfDayLeave = () => {
     axios
       .get(`${API_BASE_URL}/api/teachers`)
       .then((res) => setTeachers(res.data))
-      .catch((err) => console.error("Error fetching teachers", err));
+      .catch((err) => console.error("Error fetching teachers ", err));
 
     fetchLeaves();
   }, []);
