@@ -37,7 +37,7 @@ const TeacherList = () => {
       const response = await axios.get(`${API_BASE_URL}/api/teachers`);
       setTeachers(response.data);
     } catch (error) {
-      console.error("Error fetching teachers:", error);
+      console.error("Error fetching teachers :", error);
     }
   };
 
