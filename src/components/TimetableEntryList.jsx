@@ -58,7 +58,7 @@ const TimetableEntryList = () => {
     setStatus("");
     try {
       const res = await axios.post(`${API_BASE_URL}/api/timetable/generate`);
-      setStatus("✅ " + res.data);
+      setStatus("✅" + res.data);
       fetchAll();
     } catch (err) {
       console.error("Failed to generate timetable:", err);
